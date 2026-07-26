@@ -343,6 +343,43 @@
 
 .hero-content { position: relative; z-index: 1; }
 
+/* Two-column hero: copy left, rotating solid right */
+.hero-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: var(--space-16);
+  align-items: center;
+}
+
+.hero-visual {
+  position: relative;
+  aspect-ratio: 1;
+  width: 100%;
+}
+
+.hero-visual::after {
+  /* soft halo behind the solid */
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(56, 217, 240, 0.12), transparent 68%);
+  pointer-events: none;
+}
+
+#hero-shape {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 1024px) {
+  .hero-layout { grid-template-columns: minmax(0, 1fr); }
+  .hero-visual { display: none; }
+}
+
 .hero-name {
   display: block;
   font-family: var(--font-mono);
