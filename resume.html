@@ -191,7 +191,7 @@
                 <li>Curated an index of 70 UGA resources across 16 categories and built a BM25 retrieval layer with synonym expansion, light stemming, and typo tolerance to bridge how students phrase questions and how the index is written.</li>
                 <li>Built an evaluation harness over 59 labelled questions measuring Recall@k and MRR; it exposed a query-expansion ordering bug whose fix raised Recall@1 from 74.6% to 89.8% and Recall@3 to 100%.</li>
                 <li>Added safety triage so questions indicating risk surface crisis lines and emergency services ahead of retrieval, tuned to err toward false positives.</li>
-                <li>Constrained the model to answer only from retrieved entries and added a no-API-key search mode, keeping the public demo functional at zero cost.</li>
+                <li>Constrained the model to answer only from retrieved entries and made the app provider-agnostic across Groq, Google, and OpenAI, running Llama 3.3 70B on a free tier and falling back to plain search if the model is unavailable — a live public demo at zero cost.</li>
               </ul>
             </div>
 
