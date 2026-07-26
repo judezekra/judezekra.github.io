@@ -188,9 +188,10 @@
               </p>
               <ul style="display:flex; flex-direction:column; gap:var(--space-2); color:var(--ink-soft); font-size:var(--fs-small);">
                 <li>Built a Streamlit chat interface over OpenAI's API that answers campus questions in real time and cites the resources behind each answer.</li>
-                <li>Curated an index of 66 UGA resources across 15 categories, and wrote a weighted term-matching retrieval layer that surfaces the most relevant entries for each question.</li>
-                <li>Constrained the model to answer only from retrieved entries, and added a no-API-key search mode so the public demo works without incurring cost.</li>
-                <li>Separated retrieval from the UI and covered it with tests, which caught two keyword gaps that were silently returning the wrong office.</li>
+                <li>Curated an index of 70 UGA resources across 16 categories and built a BM25 retrieval layer with synonym expansion, light stemming, and typo tolerance to bridge how students phrase questions and how the index is written.</li>
+                <li>Built an evaluation harness over 59 labelled questions measuring Recall@k and MRR; it exposed a query-expansion ordering bug whose fix raised Recall@1 from 74.6% to 89.8% and Recall@3 to 100%.</li>
+                <li>Added safety triage so questions indicating risk surface crisis lines and emergency services ahead of retrieval, tuned to err toward false positives.</li>
+                <li>Constrained the model to answer only from retrieved entries and added a no-API-key search mode, keeping the public demo functional at zero cost.</li>
               </ul>
             </div>
 
