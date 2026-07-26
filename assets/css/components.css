@@ -487,6 +487,49 @@
   outline: none;
 }
 
+/* ---------- Portrait + "Currently" card ---------- */
+.portrait {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.now-card {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-alt);
+}
+
+.now-card .section-label { margin-bottom: var(--space-4); }
+
+.now-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+}
+
+.now-list li {
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+.now-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+}
+
+.now-list strong { color: var(--ink); font-weight: 600; }
+
 /* ---------- Résumé bullets ----------
    base.css strips list markers globally, so re-add them here as dots that
    match the accent rather than reintroducing browser default discs. */
