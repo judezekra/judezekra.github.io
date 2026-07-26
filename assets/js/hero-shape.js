@@ -7,57 +7,34 @@
   var ctx = canvas.getContext("2d");
   var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  var PHI = (1 + Math.sqrt(5)) / 2;
+  /* A rippling surface rather than a solid: a grid of points lifted by
+     travelling waves, drawn as a wireframe. Rows and columns are stroked as
+     whole polylines instead of per-segment, which keeps this to ~30 stroke
+     calls a frame regardless of resolution. */
+  var COLS = 15;
+  var ROWS = 15;
+  var TILT = 1.02;   // radians, looking down at the surface
+  var DEPTH = 3.2;   // perspective distance
 
-  /* Edges are derived from vertex distance rather than hand-listed, so the
-     topology can't drift out of sync with the coordinates. */
-  function edgesOf(points, edgeLength) {
-    var out = [];
-    for (var i = 0; i < points.length; i++) {
-      for (var j = i + 1; j < points.length; j++) {
-        var d = Math.hypot(
-          points[i][0] - points[j][0],
-          points[i][1] - points[j][1],
-          points[i][2] - points[j][2]
-        );
-        if (Math.abs(d - edgeLength) < 0.001) out.push([i, j]);
-      }
-    }
-    return out;
+  function waveHeight(x, z, t) {
+    return (
+      0.20 * Math.sin(x * 2.3 + t) +
+      0.14 * Math.cos(z * 2.0 - t * 0.75) +
+      0.09 * Math.sin((x + z) * 3.0 + t * 1.25)
+    );
   }
 
-  function normalise(points) {
-    var r = Math.hypot(points[0][0], points[0][1], points[0][2]);
-    return points.map(function (p) { return [p[0] / r, p[1] / r, p[2] / r]; });
-  }
+  function project(x, y, z, yaw, radius, cx, cy) {
+    var cosY = Math.cos(yaw), sinY = Math.sin(yaw);
+    var rx = x * cosY - z * sinY;
+    var rz = x * sinY + z * cosY;
 
-  // Icosahedron — 12 vertices, 30 edges
-  var icoRaw = [
-    [-1, PHI, 0], [1, PHI, 0], [-1, -PHI, 0], [1, -PHI, 0],
-    [0, -1, PHI], [0, 1, PHI], [0, -1, -PHI], [0, 1, -PHI],
-    [PHI, 0, -1], [PHI, 0, 1], [-PHI, 0, -1], [-PHI, 0, 1]
-  ];
-  var icoEdges = edgesOf(icoRaw, 2);
-  var ico = normalise(icoRaw);
+    var cosT = Math.cos(TILT), sinT = Math.sin(TILT);
+    var ry = y * cosT - rz * sinT;
+    var rzz = y * sinT + rz * cosT;
 
-  // Octahedron — 6 vertices, 12 edges, counter-rotating inside
-  var octRaw = [[1,0,0], [-1,0,0], [0,1,0], [0,-1,0], [0,0,1], [0,0,-1]];
-  var octEdges = edgesOf(octRaw, Math.SQRT2);
-  var oct = normalise(octRaw);
-
-  var DEPTH = 2.6; // perspective distance; smaller = more dramatic foreshortening
-
-  function project(p, rx, ry, radius, cx, cy) {
-    var cosY = Math.cos(ry), sinY = Math.sin(ry);
-    var x = p[0] * cosY - p[2] * sinY;
-    var z = p[0] * sinY + p[2] * cosY;
-
-    var cosX = Math.cos(rx), sinX = Math.sin(rx);
-    var y2 = p[1] * cosX - z * sinX;
-    var z2 = p[1] * sinX + z * cosX;
-
-    var s = DEPTH / (DEPTH + z2);
-    return { x: cx + x * radius * s, y: cy + y2 * radius * s, s: s };
+    var s = DEPTH / (DEPTH + rzz);
+    return { x: cx + rx * radius * s, y: cy + ry * radius * s, s: s };
   }
 
   var width = 0, height = 0, dpr = 1;
@@ -73,69 +50,66 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  function drawShape(points, edges, rx, ry, radius, cx, cy, colour, lineAlpha, dotScale) {
-    var projected = points.map(function (p) { return project(p, rx, ry, radius, cx, cy); });
-
-    // Edges, painted back-to-front so nearer lines sit on top
-    edges
-      .map(function (e) {
-        return { e: e, depth: (projected[e[0]].s + projected[e[1]].s) / 2 };
-      })
-      .sort(function (a, b) { return a.depth - b.depth; })
-      .forEach(function (item) {
-        var a = projected[item.e[0]], b = projected[item.e[1]];
-        ctx.globalAlpha = Math.max(0, Math.min(1, (item.depth - 0.55) * lineAlpha));
-        ctx.strokeStyle = colour;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.stroke();
-      });
-
-    // Vertices
-    projected.forEach(function (p) {
-      var r = Math.max(0.6, (p.s - 0.5) * dotScale);
-      ctx.globalAlpha = Math.max(0, Math.min(1, (p.s - 0.55) * 1.8));
-      ctx.fillStyle = "#EAF1FF";
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    ctx.globalAlpha = 1;
-  }
-
-  function render(t) {
+  function render(ms) {
     if (!width) return;
+    var t = ms * 0.0009;
+    var yaw = ms * 0.00009;
+
     ctx.clearRect(0, 0, width, height);
 
-    var cx = width / 2, cy = height / 2;
-    var base = Math.min(width, height) / 2;
+    var cx = width / 2;
+    var cy = height / 2 + Math.min(width, height) * 0.04;
+    var radius = Math.min(width, height) * 0.52;
 
-    // Concentric rings behind the solid
-    ctx.strokeStyle = "#38D9F0";
-    [0.98, 0.84, 0.66].forEach(function (f, i) {
-      ctx.globalAlpha = 0.05 + i * 0.02;
-      ctx.lineWidth = 1;
+    // Build the lifted grid once per frame
+    var grid = [];
+    for (var i = 0; i < ROWS; i++) {
+      var row = [];
+      var z = (i / (ROWS - 1)) * 2 - 1;
+      for (var j = 0; j < COLS; j++) {
+        var x = (j / (COLS - 1)) * 2 - 1;
+        var y = waveHeight(x, z, t);
+        row.push(project(x, y, z, yaw, radius, cx, cy));
+      }
+      grid.push(row);
+    }
+
+    ctx.lineWidth = 1;
+
+    function strokeLine(points) {
+      var depth = 0;
       ctx.beginPath();
-      ctx.arc(cx, cy, base * f, 0, Math.PI * 2);
+      for (var k = 0; k < points.length; k++) {
+        depth += points[k].s;
+        if (k === 0) ctx.moveTo(points[k].x, points[k].y);
+        else ctx.lineTo(points[k].x, points[k].y);
+      }
+      depth /= points.length;
+      ctx.globalAlpha = Math.max(0, Math.min(0.55, (depth - 0.6) * 1.5));
+      ctx.strokeStyle = "#38D9F0";
       ctx.stroke();
-    });
-    ctx.globalAlpha = 1;
+    }
 
-    var ry = t * 0.00028;
-    var rx = Math.sin(t * 0.00016) * 0.42;
+    for (var r = 0; r < ROWS; r++) strokeLine(grid[r]);
 
-    drawShape(oct, octEdges, -rx * 1.4, -ry * 1.9, base * 0.26, cx, cy, "#4A8CFF", 1.5, 3.4);
-    drawShape(ico, icoEdges, rx, ry, base * 0.62, cx, cy, "#38D9F0", 2.1, 5.2);
+    for (var c = 0; c < COLS; c++) {
+      var column = [];
+      for (var rr = 0; rr < ROWS; rr++) column.push(grid[rr][c]);
+      strokeLine(column);
+    }
 
-    // Core
-    ctx.globalAlpha = 0.9;
+    // Nodes on every other intersection, brighter where the surface peaks
     ctx.fillStyle = "#EAF1FF";
-    ctx.beginPath();
-    ctx.arc(cx, cy, 2.2, 0, Math.PI * 2);
-    ctx.fill();
+    for (var a = 0; a < ROWS; a += 2) {
+      for (var b = 0; b < COLS; b += 2) {
+        var p = grid[a][b];
+        ctx.globalAlpha = Math.max(0, Math.min(0.95, (p.s - 0.62) * 2.2));
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, Math.max(0.7, (p.s - 0.55) * 3.4), 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
     ctx.globalAlpha = 1;
   }
 
@@ -162,10 +136,10 @@
   resize();
   render(0);
 
-  if (prefersReduced) return; // a single static frame is enough
+  if (prefersReduced) return;
 
-  /* Only animate while the hero is actually on screen — scrolling past it
-     shouldn't leave a render loop burning in the background. */
+  /* Only animate while the hero is on screen — scrolling past shouldn't
+     leave a render loop burning in the background. */
   if ("IntersectionObserver" in window) {
     new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
