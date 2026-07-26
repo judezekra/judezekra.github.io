@@ -255,6 +255,18 @@
 .card-link .btn-arrow { transition: transform var(--dur-base) var(--ease-spring); }
 .card:hover .card-link .btn-arrow { transform: translateX(5px); }
 
+.card-links {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+  padding-top: var(--space-2);
+}
+
+.card-links .card-link { margin-top: 0; }
+.card-link--muted { color: var(--ink-soft); }
+.card-link--muted:hover { color: var(--accent-text); }
+
 /* ---------- Hero visuals ---------- */
 .hero {
   position: relative;
