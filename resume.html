@@ -185,9 +185,10 @@
                 Athens, GA · <a href="https://github.com/judezekra/UGA-Chatbot" style="color:var(--accent-text); font-weight:500;">github.com/judezekra/UGA-Chatbot</a>
               </p>
               <ul style="display:flex; flex-direction:column; gap:var(--space-2); color:var(--ink-soft); font-size:var(--fs-small);">
-                <li>Integrated OpenAI's GPT-3.5 API with a Streamlit front end, creating a conversational interface answering campus queries in real time.</li>
-                <li>Designed and imported a structured database of 50+ UGA student resources — academic advising, tutoring, career services, wellness — for quick retrieval.</li>
-                <li>Used Pandas and LangChain to manage data retrieval and contextual prompt construction.</li>
+                <li>Built a Streamlit chat interface over OpenAI's API that answers campus questions in real time and cites the resources behind each answer.</li>
+                <li>Curated an index of 66 UGA resources across 15 categories, and wrote a weighted term-matching retrieval layer that surfaces the most relevant entries for each question.</li>
+                <li>Constrained the model to answer only from retrieved entries, and added a no-API-key search mode so the public demo works without incurring cost.</li>
+                <li>Separated retrieval from the UI and covered it with tests, which caught two keyword gaps that were silently returning the wrong office.</li>
               </ul>
             </div>
 
