@@ -26,16 +26,21 @@
   gap: var(--space-2);
 }
 
-/* The header wears the unboxed gradient monogram; the boxed variant is
-   reserved for the favicon, where it needs contrast against a browser tab. */
 .logo-mark {
-  width: 34px;
-  height: 30px;
-  display: block;
+  width: 30px; height: 30px;
+  border-radius: 9px;
+  background: var(--gradient-accent);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: 0;
   transition: transform var(--dur-base) var(--ease-spring);
 }
 
-.logo:hover .logo-mark { transform: rotate(-6deg) scale(1.08); }
+.logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); }
 
 /* ---------- Nav ---------- */
 .nav-link {
@@ -269,15 +274,47 @@
   overflow: hidden;
 }
 
-/* Dot grid */
+/* Dot grid. Oversized and translated by exactly one tile so the loop is
+   seamless — animating transform keeps it on the compositor instead of
+   repainting the background every frame. */
 .hero-grid {
   position: absolute;
-  inset: 0;
+  inset: -6%;
   background-image: radial-gradient(rgba(122, 176, 255, 0.18) 1px, transparent 1px);
   background-size: 32px 32px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
   -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+  animation: grid-drift 14s linear infinite;
 }
+
+/* Scan sweep — a band of light passing down the hero */
+.hero-scan {
+  position: absolute;
+  left: 0; right: 0;
+  height: 45%;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(56, 217, 240, 0.05) 40%,
+    rgba(56, 217, 240, 0.11) 50%,
+    rgba(56, 217, 240, 0.05) 60%,
+    transparent
+  );
+  animation: hero-scan 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+/* HUD corner brackets — static, costs nothing, reads as instrumentation */
+.hero-hud {
+  position: absolute;
+  width: 46px; height: 46px;
+  border: 1px solid rgba(122, 176, 255, 0.28);
+  pointer-events: none;
+}
+.hero-hud--tl { top: 8%;  left: 4%;  border-right: none; border-bottom: none; }
+.hero-hud--br { bottom: 8%; right: 4%; border-left: none;  border-top: none; }
+
+@media (max-width: 768px) { .hero-hud { display: none; } }
 
 /* Gradient glows.
    A radial-gradient is already soft, so no blur() filter is needed — and

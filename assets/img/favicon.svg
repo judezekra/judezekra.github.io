@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="JZ monogram">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="JZ">
   <defs>
     <linearGradient id="jzBox" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#1668FF"/>
@@ -6,9 +6,7 @@
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="15" fill="url(#jzBox)"/>
-  <g fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M15 17 H49"/>
-    <path d="M23 17 V37 C23 46 16 47 13 43"/>
-    <path d="M49 17 L31 45 H50"/>
-  </g>
+  <text x="32" y="33" text-anchor="middle" dominant-baseline="central"
+        font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="27" font-weight="700"
+        fill="#FFFFFF">JZ</text>
 </svg>
