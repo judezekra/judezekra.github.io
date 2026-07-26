@@ -1,4 +1,14 @@
-﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="10" fill="#111111"/>
-  <text x="32" y="43" font-family="Georgia, 'Times New Roman', serif" font-size="30" font-weight="600" fill="#FFFFFF" text-anchor="middle">jz</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="JZ monogram">
+  <defs>
+    <linearGradient id="jzBox" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1668FF"/>
+      <stop offset="1" stop-color="#38D9F0"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="15" fill="url(#jzBox)"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 17 H49"/>
+    <path d="M23 17 V37 C23 46 16 47 13 43"/>
+    <path d="M49 17 L31 45 H50"/>
+  </g>
 </svg>

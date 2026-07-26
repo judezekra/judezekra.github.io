@@ -92,12 +92,6 @@
   --dur-base: 400ms;
   --dur-slow: 800ms;
 
-  /* Shadows / glow */
-  --shadow-sm: 0 2px 8px rgba(10, 18, 36, 0.06);
-  --shadow-md: 0 12px 32px rgba(10, 18, 36, 0.10);
-  --shadow-lg: 0 28px 64px rgba(10, 18, 36, 0.16);
-  --glow-blue: 0 12px 40px rgba(22, 104, 255, 0.32);
-  --glow-blue-strong: 0 18px 60px rgba(22, 104, 255, 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="9 12 45 40" role="img" aria-label="JZ monogram">
+  <defs>
+    <linearGradient id="jzGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38D9F0"/>
+      <stop offset="1" stop-color="#1668FF"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" stroke="url(#jzGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 17 H49"/>
+    <path d="M23 17 V37 C23 46 16 47 13 43"/>
+    <path d="M49 17 L31 45 H50"/>
+  </g>
+</svg>

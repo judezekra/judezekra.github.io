@@ -26,22 +26,16 @@
   gap: var(--space-2);
 }
 
+/* The header wears the unboxed gradient monogram; the boxed variant is
+   reserved for the favicon, where it needs contrast against a browser tab. */
 .logo-mark {
-  width: 30px; height: 30px;
-  border-radius: 9px;
-  background: var(--gradient-accent);
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-size: 0.8125rem;
-  font-family: var(--font-body);
-  font-weight: 700;
-  letter-spacing: 0;
-  box-shadow: var(--glow-blue);
+  width: 34px;
+  height: 30px;
+  display: block;
   transition: transform var(--dur-base) var(--ease-spring);
 }
 
-.logo:hover .logo-mark { transform: rotate(-8deg) scale(1.08); }
+.logo:hover .logo-mark { transform: rotate(-6deg) scale(1.08); }
 
 /* ---------- Nav ---------- */
 .nav-link {
@@ -117,7 +111,6 @@
   font-weight: 600;
   overflow: hidden;
   transition: transform var(--dur-base) var(--ease-spring),
-              box-shadow var(--dur-base) var(--ease-out),
               border-color var(--dur-fast) var(--ease-out),
               color var(--dur-fast) var(--ease-out);
 }
@@ -126,12 +119,10 @@
   background: var(--gradient-accent);
   background-size: 160% 160%;
   color: #fff;
-  box-shadow: var(--glow-blue);
 }
 
 .btn-primary:hover {
   transform: translateY(-3px);
-  box-shadow: var(--glow-blue-strong);
   animation: gradient-drift 3s ease infinite;
 }
 
@@ -184,7 +175,6 @@
   flex-direction: column;
   height: 100%;
   transition: transform var(--dur-base) var(--ease-out),
-              box-shadow var(--dur-base) var(--ease-out),
               border-color var(--dur-base) var(--ease-out);
 }
 
@@ -204,10 +194,7 @@
   z-index: 2;
 }
 
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-lg);
-}
+.card:hover { transform: translateY(-8px); }
 
 .card:hover::before { opacity: 1; }
 
